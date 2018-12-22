@@ -243,7 +243,6 @@ extension _MessagePackEncoder.SingleValueContainer: SingleValueEncodingContainer
     func encode<T>(_ value: T) throws where T : Encodable {
         try checkCanEncode(value: value)
         defer { self.canEncodeNewValue = false }
-        
         switch value {
         case let data as Data:
             try self.encode(data)
