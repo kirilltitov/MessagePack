@@ -193,32 +193,32 @@ extension _MessagePackEncoder.SingleValueContainer: SingleValueEncodingContainer
         self.storage.append(contentsOf: value.bytes)
     }
     
-    func encode(_ value: Date) throws {
-        try checkCanEncode(value: value)
-        defer { self.canEncodeNewValue = false }
-        
-        let timeInterval = value.timeIntervalSince1970
-        let (integral, fractional) = modf(timeInterval)
-        
-        let seconds = Int64(integral)
-        let nanoseconds = UInt32(fractional * Double(NSEC_PER_SEC))
-        
-        if seconds < 0 || seconds > UInt32.max {
-            self.storage.append(0xc7)
-            self.storage.append(0x0C)
-            self.storage.append(0xFF)
-            self.storage.append(contentsOf: nanoseconds.bytes)
-            self.storage.append(contentsOf: seconds.bytes)
-        } else if nanoseconds > 0 {
-            self.storage.append(0xd7)
-            self.storage.append(0xFF)
-            self.storage.append(contentsOf: ((UInt64(nanoseconds) << 34) + UInt64(seconds)).bytes)
-        } else {
-            self.storage.append(0xd6)
-            self.storage.append(0xFF)
-            self.storage.append(contentsOf: UInt32(seconds).bytes)
-        }
-    }
+//    func encode(_ value: Date) throws {
+//        try checkCanEncode(value: value)
+//        defer { self.canEncodeNewValue = false }
+//
+//        let timeInterval = value.timeIntervalSince1970
+//        let (integral, fractional) = modf(timeInterval)
+//
+//        let seconds = Int64(integral)
+//        let nanoseconds = UInt32(fractional * Double(NSEC_PER_SEC))
+//
+//        if seconds < 0 || seconds > UInt32.max {
+//            self.storage.append(0xc7)
+//            self.storage.append(0x0C)
+//            self.storage.append(0xFF)
+//            self.storage.append(contentsOf: nanoseconds.bytes)
+//            self.storage.append(contentsOf: seconds.bytes)
+//        } else if nanoseconds > 0 {
+//            self.storage.append(0xd7)
+//            self.storage.append(0xFF)
+//            self.storage.append(contentsOf: ((UInt64(nanoseconds) << 34) + UInt64(seconds)).bytes)
+//        } else {
+//            self.storage.append(0xd6)
+//            self.storage.append(0xFF)
+//            self.storage.append(contentsOf: UInt32(seconds).bytes)
+//        }
+//    }
     
     func encode(_ value: Data) throws {
         let length = value.count
@@ -246,8 +246,8 @@ extension _MessagePackEncoder.SingleValueContainer: SingleValueEncodingContainer
         switch value {
         case let data as Data:
             try self.encode(data)
-        case let date as Date:
-            try self.encode(date)
+//        case let date as Date:
+//            try self.encode(date)
         default:
             let encoder = _MessagePackEncoder()
             try value.encode(to: encoder)

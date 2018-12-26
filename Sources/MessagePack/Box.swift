@@ -31,14 +31,14 @@ extension Box where Value == Data {
     }
 }
 
-extension Box where Value == Date {
-    init(from decoder: Decoder) throws {
-        let container = try decoder.singleValueContainer()
-        self.init(try container.decode(Value.self))
-    }
-    
-    func encode(to encoder: Encoder) throws {
-        var container = encoder.singleValueContainer()
-        try container.encode(self.value)
-    }
-}
+//extension Box where Value == Date {
+//    init(from decoder: Decoder) throws {
+//        let container = try decoder.singleValueContainer()
+//        self.init(try container.decode(Value.self))
+//    }
+//    
+//    func encode(to encoder: Encoder) throws {
+//        var container = encoder.singleValueContainer()
+//        try container.encode(self.value)
+//    }
+//}
