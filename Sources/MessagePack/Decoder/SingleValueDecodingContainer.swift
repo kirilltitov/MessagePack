@@ -1,5 +1,9 @@
 import Foundation
 
+#if os(Linux)
+let NSEC_PER_SEC: UInt64 = 1000000000
+#endif
+
 extension _MessagePackDecoder {
     final class SingleValueContainer {
         var codingPath: [CodingKey]
@@ -155,7 +159,7 @@ extension _MessagePackDecoder.SingleValueContainer: SingleValueDecodingContainer
             let bitPattern = try read(UInt64.self)
             nanoseconds = TimeInterval(UInt32(bitPattern >> 34))
             seconds = TimeInterval(UInt32(bitPattern & 0x03_FF_FF_FF_FF))
-        case 0xd8:
+        case 0xc7:
             _ = try read(Int8.self) // 12
             _ = try read(Int8.self) // -1
             nanoseconds = TimeInterval(try read(UInt32.self))

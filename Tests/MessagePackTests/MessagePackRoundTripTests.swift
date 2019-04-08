@@ -34,7 +34,7 @@ class MessagePackRoundTripTests: XCTestCase {
             encoded.append(Int(n))
         }
 
-        let data = Data(bytes)
+        let data = Data(bytes: bytes)
         let decoded = try! decoder.decode([Int].self, from: data)
         XCTAssertEqual(encoded, decoded)
     }
@@ -48,21 +48,21 @@ class MessagePackRoundTripTests: XCTestCase {
             encoded[String(Unicode.Scalar(n))] = Int(n)
         }
 
-        let data = Data(bytes)
+        let data = Data(bytes: bytes)
         let decoded = try! decoder.decode([String: Int].self, from: data)
         XCTAssertEqual(encoded, decoded)
     }
-
+    
     func testRoundTripDate() {
         var bytes: [UInt8] = [0xD6, 0xFF]
 
         let dateComponents = DateComponents(year: 2018, month: 4, day: 20)
         let encoded = Calendar.current.date(from: dateComponents)!
-
+        
         let secondsSince1970 = UInt32(encoded.timeIntervalSince1970)
         bytes.append(contentsOf: secondsSince1970.bytes)
-
-        let data = Data(bytes)
+        
+        let data = Data(bytes: bytes)
         let decoded = try! decoder.decode(Date.self, from: data)
         XCTAssertEqual(encoded, decoded)
     }
@@ -73,7 +73,7 @@ class MessagePackRoundTripTests: XCTestCase {
         let decoded = try! self.decoder.decode(Date.self, from: data)
         XCTAssertEqual(encoded.timeIntervalSinceReferenceDate, decoded.timeIntervalSinceReferenceDate, accuracy: 0.0001)
     }
-
+    
     static var allTests = [
         ("testRoundTrip", testRoundTrip),
         ("testRoundTripArray", testRoundTripArray),
