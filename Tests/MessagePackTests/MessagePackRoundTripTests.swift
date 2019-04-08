@@ -4,7 +4,7 @@ import XCTest
 class MessagePackRoundTripTests: XCTestCase {
     var encoder: MessagePackEncoder!
     var decoder: MessagePackDecoder!
-    
+
     override func setUp() {
         self.encoder = MessagePackEncoder()
         self.decoder = MessagePackDecoder()
@@ -14,7 +14,7 @@ class MessagePackRoundTripTests: XCTestCase {
         let value = Airport.example
         let encoded = try! encoder.encode(value)
         let decoded = try! decoder.decode(Airport.self, from: encoded)
-        
+
         XCTAssertEqual(value.name, decoded.name)
         XCTAssertEqual(value.iata, decoded.iata)
         XCTAssertEqual(value.icao, decoded.icao)
@@ -24,8 +24,61 @@ class MessagePackRoundTripTests: XCTestCase {
         XCTAssertEqual(value.runways[0].distance, decoded.runways[0].distance)
         XCTAssertEqual(value.runways[0].surface, decoded.runways[0].surface)
     }
-    
+
+    func testRoundTripArray() {
+        let count: UInt8 = 100
+        var bytes: [UInt8] = [0xdc, 0x00, count]
+        var encoded: [Int] = []
+        for n in 1...count {
+            bytes.append(n)
+            encoded.append(Int(n))
+        }
+
+        let data = Data(bytes)
+        let decoded = try! decoder.decode([Int].self, from: data)
+        XCTAssertEqual(encoded, decoded)
+    }
+
+    func testRoundTripDictionary() {
+        let (a, z): (UInt8, UInt8) = (0x61, 0x7a)
+        var bytes: [UInt8] = [0xde, 0x00, 0x1A]
+        var encoded: [String: Int] = [:]
+        for n in a...z {
+            bytes.append(contentsOf: [0xA1, n, n])
+            encoded[String(Unicode.Scalar(n))] = Int(n)
+        }
+
+        let data = Data(bytes)
+        let decoded = try! decoder.decode([String: Int].self, from: data)
+        XCTAssertEqual(encoded, decoded)
+    }
+
+    func testRoundTripDate() {
+        var bytes: [UInt8] = [0xD6, 0xFF]
+
+        let dateComponents = DateComponents(year: 2018, month: 4, day: 20)
+        let encoded = Calendar.current.date(from: dateComponents)!
+
+        let secondsSince1970 = UInt32(encoded.timeIntervalSince1970)
+        bytes.append(contentsOf: secondsSince1970.bytes)
+
+        let data = Data(bytes)
+        let decoded = try! decoder.decode(Date.self, from: data)
+        XCTAssertEqual(encoded, decoded)
+    }
+
+    func testRoundTripDateWithNanoseconds() {
+        let encoded = Date()
+        let data = try! self.encoder.encode(encoded)
+        let decoded = try! self.decoder.decode(Date.self, from: data)
+        XCTAssertEqual(encoded.timeIntervalSinceReferenceDate, decoded.timeIntervalSinceReferenceDate, accuracy: 0.0001)
+    }
+
     static var allTests = [
-        ("testRoundTrip", testRoundTrip)
+        ("testRoundTrip", testRoundTrip),
+        ("testRoundTripArray", testRoundTripArray),
+        ("testRoundTripDictionary", testRoundTripDictionary),
+        ("testRoundTripDate", testRoundTripDate),
+        ("testRoundTripDateWithNanoseconds", testRoundTripDateWithNanoseconds)
     ]
 }
