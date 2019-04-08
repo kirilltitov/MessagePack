@@ -27,8 +27,8 @@ final public class MessagePackEncoder {
         switch value {
         case let data as Data:
             try Box<Data>(data).encode(to: encoder)
-//        case let date as Date:
-//            try Box<Date>(date).encode(to: encoder)
+        case let date as Date:
+            try Box<Date>(date).encode(to: encoder)
         default:
             try value.encode(to: encoder)
         }

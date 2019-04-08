@@ -1,4 +1,4 @@
-struct AnyCodingKey: CodingKey, Equatable {
+struct AnyCodingKey: CodingKey, Equatable, Hashable {
     var stringValue: String
     var intValue: Int?
     
@@ -18,11 +18,5 @@ struct AnyCodingKey: CodingKey, Equatable {
         } else {
             self.init(stringValue: base.stringValue)!
         }
-    }
-}
-
-extension AnyCodingKey: Hashable {
-    var hashValue: Int {
-        return self.intValue?.hashValue ?? self.stringValue.hashValue
     }
 }

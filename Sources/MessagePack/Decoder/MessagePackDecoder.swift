@@ -31,9 +31,9 @@ final public class MessagePackDecoder {
         case is Data.Type:
             let box = try Box<Data>(from: decoder)
             return box.value as! T
-//        case is Date.Type:
-//            let box = try Box<Date>(from: decoder)
-//            return box.value as! T
+        case is Date.Type:
+            let box = try Box<Date>(from: decoder)
+            return box.value as! T
         default:
             return try T(from: decoder)
         }
