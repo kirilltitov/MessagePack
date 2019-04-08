@@ -1,4 +1,4 @@
-# MessagePack
+# MessagePack (Swift 5 compatible)
 
 [![Build Status][build status badge]][build status]
 
